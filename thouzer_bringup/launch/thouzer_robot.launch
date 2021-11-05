@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="default_urg" default="a" />
+  <arg name="use_imu" default="true" />
+  <arg name="imu_port" default="/dev/ttyACM0" />
+  <arg name="publish_odom" default="true" />
+
+  <include file="$(find thouzer_driver)/launch/ether_urg.launch">
+    <arg name="default_urg" value="$(arg default_urg)" />
+  </include>
+  <include file="$(find thouzer_driver)/launch/mqtt.launch">
+    <arg name="publish_odom" value="$(arg publish_odom)" />
+  </include>
+
+  <include file="$(find thouzer_description)/launch/robot_description.launch">
+    <arg name="default_urg" value="$(arg default_urg)" />
+  </include>
+
+  <group if="$(arg use_imu)">
+    <include file="$(find rt_usb_9axisimu_driver)/launch/rt_usb_9axisimu_driver.launch">
+      <arg name="port" value="$(arg imu_port)" />
+      <arg name="frame_id" value="imu_link" />
+    </include>
+  </group>
+</launch>

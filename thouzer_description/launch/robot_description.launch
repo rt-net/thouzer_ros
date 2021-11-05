@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="default_urg" default="a" />
+  <include file="$(find thouzer_description)/launch/ether_urg_tf.launch">
+    <arg name="default_urg" value="$(arg default_urg)" />
+  </include>
+</launch>

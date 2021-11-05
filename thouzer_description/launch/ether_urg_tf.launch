@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="default_urg" default="a" />
+  <node pkg="tf" type="static_transform_publisher" name="baselink_tf_broadcaster" args="0 0 0 0 0 0 /base_footprint /base_link 10" />
+  <node pkg="tf" type="static_transform_publisher" name="imulink_tf_broadcaster" args="0 0 0.35 0 0 0 /base_link /imu_link 10" />
+  <node pkg="tf" type="static_transform_publisher" name="lrf_tf_broadcaster_1" args="0.2 0.0 0.32 0 0 3.14 /base_link /urg_link_a 10" />
+  <node pkg="tf" type="static_transform_publisher" name="lrf_tf_broadcaster_2" args="0.436 0.0 0.4 0 0.785 3.14 /base_link /urg_link_b 10" />
+  <node pkg="tf" type="static_transform_publisher" name="lrf_tf_broadcaster_3" args="0.602 0.0 1.197 0 0 0 /base_link /urg_link_c 10" />
+  <node pkg="tf" type="static_transform_publisher" name="laser_tf_broadcaster" args="0 0 0 0 0 0 /urg_link_$(arg default_urg) /laser 10" />
+</launch>

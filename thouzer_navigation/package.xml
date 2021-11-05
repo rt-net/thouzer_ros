@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>thouzer_navigation</name>
+  <version>0.0.0</version>
+  <description>The thouzer_navigation package</description>
+
+  <maintainer email="support@rt-net.jp">RT Corporation</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>emcl</exec_depend>
+  <exec_depend>laser_scan_matcher</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>neonavigation</exec_depend>
+
+  <export>
+
+  </export>
+</package>

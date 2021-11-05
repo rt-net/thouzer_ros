@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>thouzer_driver</name>
+  <version>0.0.0</version>
+  <description>The thouzer_driver package</description>
+
+  <maintainer email="support@rt-net.jp">RT Corporation</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>urg_node</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>python-enum34</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>thouzer_msgs</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+
+  <export>
+  </export>
+</package>

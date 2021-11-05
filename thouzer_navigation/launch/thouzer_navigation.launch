@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- map for scan matching -->
+  <arg name="map_file" default="$(find thouzer_slam)/maps/3f-all-startlock-wideopendoor-top-urg.yaml" />
+  <!-- map for local cost map -->
+  <arg name="map_file_with_local_objects" default="$(find thouzer_slam)/maps/3f-all-startlock-wideopendoor.yaml" />
+  <arg name="use_independent_local_map" default="true" />
+  <arg name="localization" default="amcl" doc="model type [amcl, emcl]" />
+  <arg name="navigation" default="neonavigation" doc="model type [move_base, neonavigation]" />
+  <arg name="rviz" default="true" />
+  <arg name="use_odometry" default="true" />
+
+  <arg name="simulate" default="false" />
+  <arg name="sim_robot_x" default="0.0" />
+  <arg name="sim_robot_y" default="0.0" />
+  <arg name="sim_robot_yaw" default="0.0" />
+  <arg name="cmd_vel_output" default="/cmd_vel" />
+
+  <!-- navigation -->
+  <include file="$(find thouzer_navigation)/launch/$(arg navigation).launch">
+    <arg name="use_independent_local_map" value="$(arg use_independent_local_map)" />
+  </include>
+
+  <!-- localization -->
+  <include file="$(find thouzer_navigation)/launch/$(arg localization).launch" />
+
+  <group unless="$(arg use_odometry)">
+    <include file="$(find thouzer_navigation)/launch/laser_scan_matcher.launch" />
+  </group>
+
+  <!-- map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen" />
+
+  <node pkg="map_server" type="map_server" name="map_server_local" args="$(arg map_file_with_local_objects)" if="$(arg use_independent_local_map)">
+    <remap from="map" to="map_with_local_objects" />
+  </node>
+
+  <!-- rviz -->
+  <group if="$(arg rviz)">
+    <arg name="rviz_config" default="$(find thouzer_navigation)/rviz/thouzer_$(arg navigation).rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(arg rviz_config)" output="screen" required="true" />
+    <include file="$(find waypoint_gui)/launch/waypoint_gui.launch">
+      <arg name="rviz" value="false" />
+    </include>
+  </group>
+
+  <group if="$(arg simulate)">
+    <node pkg="costmap_cspace" type="largemap_to_map" name="largemap_to_local_map_simulation">
+      <remap from="map" to="map_with_local_objects" />
+      <remap from="map_local" to="overlay2" />
+      <param name="width" value="60" />
+      <param name="hz" value="1.5" />
+      <param name="round_local_map" value="true" />
+      <param name="simulate_occlusion" value="true" />
+    </node>
+    <node pkg="planner_cspace" type="dummy_robot" name="dummy_robot">
+      <remap from="cmd_vel" to="$(arg cmd_vel_output)" />
+    </node>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="stf1" args="$(arg sim_robot_x) $(arg sim_robot_y) 0 $(arg sim_robot_yaw) 0 0 map odom" />
+  </group>
+
+</launch>

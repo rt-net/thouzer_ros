@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ip_address" default="192.168.212.1" />
+  <arg name="ip_port_a" default="10940" />
+  <arg name="ip_port_b" default="10941" />
+  <arg name="ip_port_c" default="10945" />
+  <arg name="default_urg" default="a" />
+
+  <group ns="thouzer">
+    <node name="scan_topic_remapper" pkg="topic_tools" type="relay" args="$(arg default_urg)/scan /scan" />
+
+    <node pkg="urg_node" name="urg_node_a" type="urg_node" required="true">
+      <param name="frame_id" value="urg_link_a" />
+      <param name="ip_address" value="$(arg ip_address)" />
+      <param name="ip_port" value="$(arg ip_port_a)" />
+      <param name="calibrate_time" value="false" />
+      <param name="synchronize_time" value="true" />
+      <remap from="scan" to="a/scan" />
+    </node>
+
+    <node pkg="urg_node" name="urg_node_b" type="urg_node" required="true">
+      <param name="frame_id" value="urg_link_b" />
+      <param name="ip_address" value="$(arg ip_address)" />
+      <param name="ip_port" value="$(arg ip_port_b)" />
+      <param name="calibrate_time" value="false" />
+      <param name="synchronize_time" value="true" />
+      <remap from="scan" to="b/scan" />
+    </node>
+
+    <node pkg="urg_node" name="urg_node_c" type="urg_node" required="true">
+      <param name="frame_id" value="urg_link_c" />
+      <param name="ip_address" value="$(arg ip_address)" />
+      <param name="ip_port" value="$(arg ip_port_c)" />
+      <param name="calibrate_time" value="false" />
+      <param name="synchronize_time" value="true" />
+      <remap from="scan" to="c/scan" />
+    </node>
+  </group>
+</launch>

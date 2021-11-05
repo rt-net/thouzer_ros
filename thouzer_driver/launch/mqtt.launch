@@ -1,0 +1,14 @@
+<launch>
+  <arg name="publish_odom" default="true" />
+  <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+    <!-- <rosparam command="delete" param="" /> -->
+    <rosparam command="load" file="$(find thouzer_driver)/config/mqtt.yaml" />
+  </node>
+  <node name="thouzer_cmd_vel" pkg="thouzer_driver" type="cmd_vel.py" />
+  <node name="thouzer_commander" pkg="thouzer_driver" type="commander.py" />
+  <node name="thouzer_odom" pkg="thouzer_driver" type="odom.py" if="$(arg publish_odom)">
+    <param name="odom_frame_id" value="odom" />
+    <param name="robot_frame_id" value="base_footprint" />
+  </node>
+  <node name="thouzer_watchdog" pkg="thouzer_driver" type="watchdog.py" />
+</launch>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="use_safety_limiter" default="false" />
+  <arg name="use_path_with_velocity" default="true" />
+  <arg name="cmd_vel_output" default="/cmd_vel" />
+  <arg name="vel" default="0.3" />
+  <arg name="acc" default="0.3" />
+  <arg name="ang_vel" default="0.6" />
+  <arg name="ang_acc" default="0.6" />
+  <arg name="look_forward" default="0.1" />
+  <arg name="curv_forward" default="0.2" />
+  <arg name="slow_and_precise" default="true" />
+
+  <arg name="linear_expand" default="0.08" />
+  <arg name="linear_spread" default="0.3" />
+  <arg name="output_info" default="screen" />
+
+  <arg name="use_footprint" default="true" />
+  <arg name="footprint" default="[[-0.3, 0.35], [-0.3, -0.35], [0.7 ,-0.35] ,[0.7, 0.35]]" />
+
+  <arg name="use_independent_local_map" default="false"/>
+
+  <param name="neonavigation_compatible" value="1" />
+  <rosparam command="load" file="$(find thouzer_navigation)/config/navigate.yaml"/>
+
+  <node pkg="costmap_cspace" type="costmap_3d" name="costmap_3d" output="$(arg output_info)" >
+    <rosparam param="footprint" if="$(arg use_footprint)" subst_value="True">$(arg footprint)</rosparam>
+  </node>
+
+  <node pkg="costmap_cspace" type="laserscan_to_map" name="laserscan_to_map" output="$(arg output_info)">
+    <!-- <remap from="scan" to="scan" /> -->
+    <!-- <remap from="map" to="map" /> -->
+    <remap from="map_local" to="overlay2" />
+    <param name="width" value="200" />
+    <param name="resolution" value="0.05" />
+    <param name="hz" value="1.0" />
+    <param name="accum_duration" value="1.0" />
+    <param name="global_frame" value="map" />
+    <param name="robot_frame" value="base_footprint" />
+  </node>
+
+  <node pkg="costmap_cspace" type="largemap_to_map" name="largemap_to_map" output="$(arg output_info)" if="$(arg use_independent_local_map)">
+    <remap from="map" to="map_with_local_objects" />
+    <remap from="map_local" to="overlay1" />
+    <param name="width" value="60" />
+    <param name="hz" value="1.5" />
+    <param name="round_local_map" value="false" />
+    <param name="simulate_occlusion" value="true" />
+  </node>
+
+  <node pkg="planner_cspace" type="planner_3d" name="planner_3d" output="$(arg output_info)">
+    <param name="use_path_with_velocity" value="$(arg use_path_with_velocity)" />
+  </node>
+
+  <node pkg="trajectory_tracker" type="trajectory_tracker" name="spur">
+    <remap from="cmd_vel" to="$(arg cmd_vel_output)" unless="$(arg use_safety_limiter)" />
+    <remap from="cmd_vel" to="cmd_vel_raw" if="$(arg use_safety_limiter)" />
+
+    <param name="max_vel" value="$(arg vel)" />
+    <param name="max_acc" value="$(arg acc)" />
+    <param name="max_angvel" value="$(arg ang_vel)" />
+    <param name="max_angacc" value="$(arg ang_acc)" />
+
+    <param name="curv_forward" value="$(arg curv_forward)" />
+    <param name="look_forward" value="$(arg look_forward)" />
+
+    <param name="rotate_ang" value="0.2" if="$(arg slow_and_precise)" />
+    <param name="rotate_ang" value="0.4" unless="$(arg slow_and_precise)" />
+
+  </node>
+  <node pkg="safety_limiter" type="safety_limiter" name="safety_limiter" if="$(arg use_safety_limiter)" output="screen">
+    <remap from="cmd_vel_in" to="cmd_vel_raw" />
+    <remap from="cmd_vel" to="$(arg cmd_vel_output)" />
+    <rosparam param="footprint" if="$(arg use_footprint)" subst_value="True">$(arg footprint)</rosparam>
+    <param name="allow_empty_cloud" value="true" />
+    <param name="watchdog_interval" value="0.0" />
+  </node>
+
+  <node pkg="planner_cspace" type="patrol" name="patrol" />
+</launch>

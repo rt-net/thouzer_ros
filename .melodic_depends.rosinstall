@@ -1,0 +1,12 @@
+- git:
+    local-name: mqtt_bridge
+    uri: https://github.com/groove-x/mqtt_bridge.git
+    version: python2.7
+- git:
+    local-name: rt_usb_9axisimu_driver
+    uri: https://github.com/rt-net/rt_usb_9axisimu_driver.git
+    version: melodic-devel
+- git:
+    local-name: emcl
+    uri: https://github.com/ryuichiueda/emcl.git
+    version: master

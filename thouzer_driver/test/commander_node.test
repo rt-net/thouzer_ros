@@ -1,0 +1,8 @@
+
+<launch>
+  <node name="mqtt_bridge" pkg="mqtt_bridge" type="mqtt_bridge_node.py" output="screen">
+    <rosparam command="load" file="$(find thouzer_driver)/config/mqtt-test.yaml" />
+  </node>
+  <node name="thouzer_commander" pkg="thouzer_driver" type="commander.py" />
+  <test test-name="commander_test" pkg="thouzer_driver" type="commander_node_test.py" />
+</launch>

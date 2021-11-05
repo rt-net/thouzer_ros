@@ -1,0 +1,3 @@
+[submodule "waypoint_gui"]
+	path = waypoint_gui
+	url = https://github.com/rt-net/waypoint_gui.git

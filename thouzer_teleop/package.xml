@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>thouzer_teleop</name>
+  <version>0.0.0</version>
+  <description>The thouzer_teleop package</description>
+
+  <maintainer email="support@rt-net.jp">RT Corporation</maintainer>
+
+  <license>Apache-2.0</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>teleop_twist_keyboard</exec_depend>
+  <exec_depend>joy</exec_depend>
+
+
+  <export>
+  </export>
+</package>

@@ -1,0 +1,55 @@
+version: "3.4"
+
+# template
+x-thouzer-apps: &common
+    image: rt-net/thouzer_driver
+    build:
+        context: .
+        dockerfile: ./docker/Dockerfile
+    command: ["roslaunch", "thouzer_bringup", "thouzer_robot.launch"]
+    network_mode: "host"
+    environment:
+        QT_X11_NO_MITSHM: 1
+        DISPLAY: $DISPLAY
+        NVIDIA_VISIBLE_DEVICES: all
+        NVIDIA_DRIVER_CAPABILITIES: all
+    volumes:
+        - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+        - "$HOME/.Xauthority:/root/.Xauthority"
+        - ./thouzer_bringup:/root/catkin_ws/src/thouzer_ros/thouzer_bringup
+        - ./thouzer_description:/root/catkin_ws/src/thouzer_ros/thouzer_description
+        - ./thouzer_driver:/root/catkin_ws/src/thouzer_ros/thouzer_driver
+        - ./thouzer_gui:/root/catkin_ws/src/thouzer_ros/thouzer_gui
+        - ./thouzer_msgs:/root/catkin_ws/src/thouzer_ros/thouzer_msgs
+        - ./thouzer_navigation:/root/catkin_ws/src/thouzer_ros/thouzer_navigation
+        - ./thouzer_slam:/root/catkin_ws/src/thouzer_ros/thouzer_slam
+        - ./thouzer_teleop:/root/catkin_ws/src/thouzer_ros/thouzer_teleop
+        - ./thouzer_waypoints:/root/catkin_ws/src/thouzer_ros/thouzer_waypoints
+        - ./.melodic_depends.rosinstall:/root/catkin_ws/src/thouzer_ros/.melodic_depends.rosinstall
+
+services:
+    robot:
+        <<: *common
+        # command: ["roslaunch", "thouzer_bringup", "thouzer_robot.launch", "use_imu:=false", "publish_odom:=false"]
+        command: ["roslaunch", "thouzer_bringup", "thouzer_robot.launch", "use_imu:=true"]
+        # command: ["roslaunch", "thouzer_bringup", "thouzer_robot.launch", "use_imu:=false"]
+        devices:
+            - "/dev/ttyACM0:/dev/ttyACM0"
+    rviz:
+        <<: *common
+        command: ["roslaunch", "thouzer_bringup", "thouzer_remote_debugger.launch"]
+        privileged: true
+        runtime: nvidia
+    debugger:
+        <<: *common
+        command: ["terminator"]
+        privileged: true
+        runtime: nvidia
+        devices:
+            - "/dev/input/js0:/dev/input/js0"
+    nogpu-debugger:
+        <<: *common
+        command: ["terminator"]
+        privileged: true
+
+        

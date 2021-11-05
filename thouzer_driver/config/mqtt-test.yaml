@@ -1,0 +1,35 @@
+mqtt:
+  client:
+    protocol: 4      # MQTTv311
+  connection:
+    # host: 192.168.212.1
+    host: localhost
+    port: 1883
+    keepalive: 60
+  account:
+    username: "mqtt"
+    password: "write_password_here"
+
+serializer: json:dumps
+deserializer: json:loads
+bridge:
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: thouzer_msgs.msg:Battery
+    topic_from: 0/WHISPERER/RMS-9999-ZZZZZ/battery
+    topic_to: /thouzer/battery
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: thouzer_msgs.msg:Commander
+    topic_from: /thouzer/commander
+    topic_to: 0/THOUZER_HW/RMS-9999-ZZZZZ/exec/cmd
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: thouzer_msgs.msg:Vel
+    topic_from: /thouzer/vel
+    topic_to: 0/WHISPERER/RMS-9999-ZZZZZ/nav
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: thouzer_msgs.msg:Odom
+    topic_from: 0/WHISPERER/RMS-9999-ZZZZZ/pos2D_DWO
+    topic_to: /thouzer/odom
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: thouzer_msgs.msg:App
+    topic_from: 0/THOUZER_HW/RMS-9999-ZZZZZ/status/app
+    topic_to: /thouzer/status/app
