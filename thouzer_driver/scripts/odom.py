@@ -105,8 +105,8 @@ class OdomPublisher():
 
         self.pub_odom.publish(odom)
 
-    def bradcast_tf(self, time, pos_x_m, pos_y_m, pos_yaw_rad):
-        # calculate tf 
+    def broadcast_tf(self, time, pos_x_m, pos_y_m, pos_yaw_rad):
+        # calculate tf
         transform = geometry_msgs.msg.TransformStamped()
 
         transform.header.stamp    = time
@@ -156,7 +156,7 @@ class OdomPublisher():
                        self.x_m, self.y_m, yaw_rad,
                        self.vx, self.vth)
         # broadcast tf
-        self.bradcast_tf(cur_time,
+        self.broadcast_tf(cur_time,
                          self.x_m, self.y_m, yaw_rad)
 
         self.send_time = cur_time
